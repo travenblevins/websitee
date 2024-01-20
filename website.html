@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div id="original-post"> 
+        <h1>What's your favorite fast food restaurant?</h1>
+        <h2>Post A Comment!</h2>
+    </div>    
+
+    <form id="form">
+        Display-name: <input type="text" id="username"> 
+        <br>
+        Your Comment: <input type="text" id="comment">
+        <input type="submit" id="submit" value="Submit">
+    </form>
+
+    <div id="output">
+        <!-- Comments will be dynamically added here -->
+    </div>
+
+    <script src="app.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            let commentIdCounter = 0; // Counter for unique comment IDs
+
+            // Submit comment
+            $('#submit').on('click', function (event) {
+                event.preventDefault();
+
+                // Get the values from the input fields
+                let usernameValue = $('#username').val();
+                let commentValue = $('#comment').val();
+
+                // Create a unique comment ID
+                let commentId = 'comment' + commentIdCounter++;
+
+                // Display the result
+                let commentHtml = `
+                    <div class="comment" data-comment-id="${commentId}">
+                        <p>Username: ${usernameValue}</p>
+                        <p>Comment: ${commentValue}</p>
+                        <button class="edit-comment" data-comment-id="${commentId}">Edit</button>
+                        <button class="delete-comment" data-comment-id="${commentId}">Delete</button>
+                    </div>
+                `;
+
+                $('#output').append(commentHtml);
+
+                // Clear the input fields
+                $('#username').val('');
+                $('#comment').val('');
+            });
+
+            // Edit comment
+            $(document).on('click', '.edit-comment', function () {
+                let commentId = $(this).data('comment-id');
+                let commentContent = $(`[data-comment-id="${commentId}"] p:last`).text();
+
+                // Display a textarea for editing
+                let editedComment = prompt('Edit your comment:', commentContent);
+
+                // Update the comment if the user provides a new comment
+                if (editedComment !== null) {
+                    $(`[data-comment-id="${commentId}"] p:last`).text(editedComment);
+                }
+            });
+
+            // Delete comment
+            $(document).on('click', '.delete-comment', function () {
+                let commentId = $(this).data('comment-id');
+
+                // Ask for confirmation
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    // Remove the comment's container
+                    $(`[data-comment-id="${commentId}"]`).remove();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
